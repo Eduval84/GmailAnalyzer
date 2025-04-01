@@ -1,5 +1,7 @@
 using OpenAI_API;
+using OpenAI_API.Chat;
 using GmailAnalyzer.Models;
+using System.Text.RegularExpressions;
 
 namespace GmailAnalyzer.Services
 {
@@ -17,18 +19,43 @@ namespace GmailAnalyzer.Services
         public async Task<EmailAnalysisResult> AnalyzeEmail(string emailContent)
         {
             var prompt = $"{_contextPrompt}\n\nAnalyze this email:\n{emailContent}\n\n" +
-                        "Provide a summary and importance score (1-10) in markdown format.";
+                        "Provide a summary and importance score (1-10) in the following format:\n" +
+                        "Subject: [Email subject]\nImportanceScore: [1-10]\nSummary: [Brief summary of the email content]";
 
-            var result = await _api.Completions.CreateCompletion(new OpenAI_API.Completions.CompletionRequest
+            var chatRequest = new ChatRequest()
             {
                 Model = "gpt-3.5-turbo",
-                Prompt = prompt,
-                MaxTokens = 500
-            });
+                Temperature = 0.7,
+                MaxTokens = 500,
+                Messages = new List<ChatMessage>
+                {
+                    new ChatMessage(ChatMessageRole.System, "You are an AI assistant that helps analyze emails."),
+                    new ChatMessage(ChatMessageRole.User, prompt)
+                }
+            };
 
-            // Parse the JSON response and create EmailAnalysisResult
-            // Implementation details...
-            return new EmailAnalysisResult();
+            var result = await _api.Chat.CreateChatCompletionAsync(chatRequest);
+            var responseText = result.Choices[0].Message.Content;
+
+            // Parse the response to extract Subject, ImportanceScore, and Summary
+            var emailAnalysis = new EmailAnalysisResult();
+            
+            // Extract subject
+            var subjectMatch = Regex.Match(responseText, @"Subject:\s*(.+)");
+            if (subjectMatch.Success)
+                emailAnalysis.Subject = subjectMatch.Groups[1].Value.Trim();
+            
+            // Extract importance score
+            var importanceMatch = Regex.Match(responseText, @"ImportanceScore:\s*(\d+)");
+            if (importanceMatch.Success && int.TryParse(importanceMatch.Groups[1].Value, out int score))
+                emailAnalysis.ImportanceScore = score;
+            
+            // Extract summary
+            var summaryMatch = Regex.Match(responseText, @"Summary:\s*(.+)", RegexOptions.Singleline);
+            if (summaryMatch.Success)
+                emailAnalysis.Summary = summaryMatch.Groups[1].Value.Trim();
+
+            return emailAnalysis;
         }
     }
 }

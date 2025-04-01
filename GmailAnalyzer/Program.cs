@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using GmailAnalyzer.Services;
+using GmailAnalyzer.Models;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -21,8 +22,8 @@ I am not interested in the emails of the team members, only the emails that are 
 I am not interested in emails for invitations to SIMA Desktop deployments.
 I work with team members Enrique Rosales, Victor Santos, Ronny, Luis León y Alejandro Esteban.";
 
-var gmailService = new GmailService(gmailSettings);
-var openAiService = new OpenAIService(openAiKey, contextPrompt);
+var gmailService = new GmailService(gmailSettings.Email, gmailSettings.Password);
+var openAiService = new OpenAIService(openAiKey ?? string.Empty, contextPrompt);
 
 var unreadEmails = await gmailService.GetUnreadEmails();
 var analysisResults = new List<EmailAnalysisResult>();
