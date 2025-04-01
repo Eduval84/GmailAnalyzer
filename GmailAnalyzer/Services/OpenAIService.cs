@@ -17,7 +17,7 @@ namespace GmailAnalyzer.Services
         public async Task<EmailAnalysisResult> AnalyzeEmail(string emailContent)
         {
             var prompt = $"{_contextPrompt}\n\nAnalyze this email:\n{emailContent}\n\n" +
-                        "Provide a summary and importance score (1-10) in JSON format.";
+                        "Provide a summary and importance score (1-10) in markdown format.";
 
             var result = await _api.Completions.CreateCompletion(new OpenAI_API.Completions.CompletionRequest
             {
