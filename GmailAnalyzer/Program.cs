@@ -7,7 +7,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var openAiKey = configuration["OpenAI:ApiKey"];
-var gmailCredentialsPath = configuration["Gmail:CredentialsPath"];
+var gmailSettings = configuration.GetSection("Gmail").Get<GmailSettings>();
 
 // Example context prompt
 var contextPrompt = @"I am a Tech Lead in the Platform team. 
@@ -21,7 +21,7 @@ I am not interested in the emails of the team members, only the emails that are 
 I am not interested in emails for invitations to SIMA Desktop deployments.
 I work with team members Enrique Rosales, Victor Santos, Ronny, Luis León y Alejandro Esteban.";
 
-var gmailService = new GmailService(gmailCredentialsPath);
+var gmailService = new GmailService(gmailSettings);
 var openAiService = new OpenAIService(openAiKey, contextPrompt);
 
 var unreadEmails = await gmailService.GetUnreadEmails();
