@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GmailAnalyzer", "GmailAnalyzer.csproj", "{5735FF3B-A00F-7A9D-D614-49D852AB676A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5735FF3B-A00F-7A9D-D614-49D852AB676A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5735FF3B-A00F-7A9D-D614-49D852AB676A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5735FF3B-A00F-7A9D-D614-49D852AB676A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5735FF3B-A00F-7A9D-D614-49D852AB676A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6A27A15D-D395-4A5B-AEB4-53CA773D8B3B}
+	EndGlobalSection
+EndGlobal
