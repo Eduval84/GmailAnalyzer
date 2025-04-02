@@ -15,17 +15,20 @@ namespace GmailAnalyzer.Services
             _api = new OpenAIAPI(apiKey);
             _contextPrompt = contextPrompt;
         }
-
-        // Método sobrecargado que mantiene la compatibilidad con el código existente
+        
+        // Modificamos los métodos que procesan el contenido para usar el truncado       
         public async Task<EmailAnalysisResult> AnalyzeEmail(string emailContent)
         {
-            // Intentar extraer el asunto del contenido del correo
-            string extractedSubject = ExtractSubjectFromEmailContent(emailContent);
-            string extractedSender = ExtractSenderFromEmailContent(emailContent);
-            string[] extractedCcRecipients = ExtractCcRecipientsFromEmailContent(emailContent);
+            // Truncar el contenido si es muy largo
+            string truncatedContent = TruncateEmailContent(emailContent);
+            
+            // Extraer información del correo truncado
+            string extractedSubject = ExtractSubjectFromEmailContent(truncatedContent);
+            string extractedSender = ExtractSenderFromEmailContent(truncatedContent);
+            string[] extractedCcRecipients = ExtractCcRecipientsFromEmailContent(truncatedContent);
             
             // Llamar al método principal con los datos extraídos
-            return await AnalyzeEmail(emailContent, extractedSubject, extractedSender, extractedCcRecipients);
+            return await AnalyzeEmail(truncatedContent, extractedSubject, extractedSender, extractedCcRecipients);
         }
 
         private async Task<EmailAnalysisResult> AnalyzeEmail(string emailContent, string subject, string sender, string[] ccRecipients)
@@ -107,7 +110,10 @@ namespace GmailAnalyzer.Services
         
         private async Task<EmailAnalysisResult> PerformFullEmailAnalysis(string emailContent, string subject, int initialScore)
         {
-            var prompt = $"{_contextPrompt}\n\nAnaliza este correo en detalle:\n{emailContent}\n\n" +
+            // Truncar el contenido si es muy largo
+            string truncatedContent = TruncateEmailContent(emailContent);
+            
+            var prompt = $"{_contextPrompt}\n\nAnaliza este correo en detalle:\n{truncatedContent}\n\n" +
                         "Proporciona un resumen y confirma o ajusta la puntuación de importancia (1-10) en el siguiente formato:\n" +
                         $"Subject: {subject}\nImportanceScore: [1-10]\nSummary: [Resumen breve del contenido del correo]";
 
@@ -150,5 +156,34 @@ namespace GmailAnalyzer.Services
 
             return emailAnalysis;
         }
+        private string TruncateEmailContent(string emailContent, int maxTokens = 8000)
+        {
+            // Estimación aproximada: 1 token ~= 4 caracteres en inglés
+            // Para ser conservadores con idiomas que pueden usar más caracteres por token
+            // usamos un factor de 3 caracteres por token
+            int estimatedTokens = EstimateTokenCount(emailContent);
+            
+            if (estimatedTokens <= maxTokens)
+                return emailContent;
+
+            // Si excede el límite, truncamos manteniendo el inicio y agregando una nota
+            int charactersToKeep = maxTokens * 3;
+            string truncatedContent = emailContent.Substring(0, Math.Min(emailContent.Length, charactersToKeep));
+            
+            return truncatedContent + "\n\n[MENSAJE TRUNCADO - El contenido era demasiado largo para procesarse completamente]";
+        }
+        
+        private int EstimateTokenCount(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0;
+                
+            // Estimación aproximada basada en caracteres
+            // Típicamente, en inglés, 1 token ~= 4 caracteres
+            // Para ser más conservadores (considerar idiomas con más caracteres por token)
+            // usamos un estimado de 3 caracteres por token
+            return (int)Math.Ceiling(text.Length / 3.0);
+        }
+
     }
 }
