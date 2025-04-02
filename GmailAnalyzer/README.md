@@ -1,47 +1,60 @@
 # Analizador de Gmail
 
-## Descripción
-GmailAnalyzer es una herramienta que ayuda a procesar y analizar automáticamente los correos electrónicos no leídos de Gmail utilizando inteligencia artificial. El programa utiliza la API de Gmail para acceder a los correos y OpenAI para analizar su contenido, proporcionando resúmenes y puntuaciones de importancia.
+Una herramienta para analizar mensajes de Gmail utilizando las APIs de OpenAI.
 
-## Objetivo
-El objetivo principal es ayudar a los usuarios a gestionar de manera más eficiente su bandeja de entrada, identificando rápidamente los correos más importantes y proporcionando resúmenes concisos de su contenido.
+## Objetivo del Proyecto
 
-## Características
-- Lectura automática de correos no leídos de Gmail
-- Análisis de contenido utilizando OpenAI
-- Puntuación de importancia para cada correo
-- Generación de resúmenes concisos
-- Contextualización basada en el equipo y proyecto del usuario
+Este proyecto tiene como objetivo ayudar a los usuarios a analizar y procesar automáticamente sus correos electrónicos de Gmail mediante inteligencia artificial. Permite:
 
-## Requisitos
-- Credenciales de Gmail (archivo de credenciales)
-- Clave API de OpenAI
-- Archivo appsettings.json configurado
+- Analizar el contenido de los correos electrónicos
+- Categorizar mensajes según su importancia
+- Generar resúmenes automáticos de correos largos
+- Identificar acciones requeridas en los mensajes
+- Ayudar a priorizar la bandeja de entrada
+
+## Cómo Usar
+
+1. **Configuración Inicial**:
+   - Clona este repositorio
+   - Instala las dependencias necesarias
+   - Configura tu archivo `appsettings.json` con tus credenciales
+
+2. **Ejecución**:
+   - Ejecuta la aplicación
+   - Autoriza el acceso a tu cuenta de Gmail cuando se solicite
+   - Selecciona las opciones de análisis según tus necesidades
+
+3. **Interpretación de Resultados**:
+   - Revisa los análisis generados
+   - Utiliza los resúmenes y categorizaciones para gestionar tu bandeja de entrada
 
 ## Configuración
-1. Crear un archivo `appsettings.json` con la siguiente estructura:
+
+La aplicación utiliza un archivo `appsettings.json` para la configuración:
+
 ```json
 {
   "OpenAI": {
-    "ApiKey": "tu-clave-api"
+    "ApiKey": "tu-clave-api-de-openai"
   },
   "Gmail": {
-    "CredentialsPath": "ruta-a-tus-credenciales"
+    "Email": "tu-correo@gmail.com",
+    "Password": "tu-contraseña"
+  },
+  "Context": {
+    "Prompt": "Tu prompt de contexto personalizado aquí..."
   }
 }
 ```
 
-2. Configurar las credenciales de Gmail
-3. Configurar la clave API de OpenAI
+### Prompt de Contexto
 
-## Uso
-Ejecutar el programa y automáticamente:
-1. Leerá los correos no leídos
-2. Analizará cada correo
-3. Mostrará los resultados ordenados por importancia
+El prompt de contexto se utiliza para proporcionar información personalizada a la IA al analizar los correos. Contiene información sobre:
 
-## Salida
-Por cada correo analizado, se mostrará:
-- Asunto del correo
-- Puntuación de importancia (1-10)
-- Resumen del contenido
+- Tu rol y responsabilidades
+- Tu estructura organizacional
+- Proyectos actuales y prioridades
+- Miembros del equipo
+- Preferencias de filtrado de correos
+
+Personaliza el prompt de contexto en el archivo `appsettings.json` para adaptar el análisis a tus necesidades específicas.
